@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:async';
 
 void main() {
   runApp(
     ChangeNotifierProvider(
-      create: (context) => ResearchModel(),
+      create: (context) => GameDataModel(),
       child: const MyApp(),
     )
   );
@@ -73,6 +74,22 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Timer? _gameTickTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _gameTickTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      Provider.of<GameDataModel>(context, listen: false).incrementTick();
+    });
+  }
+
+  @override
+  void dispose() {
+    _gameTickTimer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -115,16 +132,17 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            Consumer<ResearchModel>(
-              builder: (context, research, child) {
+            Consumer<GameDataModel>(
+              builder: (context, gameData, child) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     TextButton(
-                      onPressed: research.incrementResearch,
+                      onPressed: gameData.incrementResearch,
                       child: const Text('Increment Research'),
                     ),
-                    Text('Current research: ${research.research}'),
+                    Text('Current research: ${gameData.research}'),
+                    Text('Current ticks: ${gameData.ticks}'),
                   ],
                 );
               }
@@ -141,10 +159,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class ResearchModel extends ChangeNotifier {
+class GameDataModel extends ChangeNotifier {
+  int _tick = 0;
   int _research = 0;
 
+  int get ticks => _tick;
   int get research => _research;
+
+  void incrementTick() {
+    _tick++;
+    notifyListeners();
+  }
 
   void incrementResearch() {
     _research++;
