@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ResearchModel(),
+      child: const MyApp(),
+    )
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -11,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Space Explorer',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -30,7 +36,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Space Explorer Home Page'),
     );
   }
 }
@@ -109,6 +115,20 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            Consumer<ResearchModel>(
+              builder: (context, research, child) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    TextButton(
+                      onPressed: research.incrementResearch,
+                      child: const Text('Increment Research'),
+                    ),
+                    Text('Current research: ${research.research}'),
+                  ],
+                );
+              }
+            ),
           ],
         ),
       ),
@@ -118,5 +138,16 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+}
+
+class ResearchModel extends ChangeNotifier {
+  int _research = 0;
+
+  int get research => _research;
+
+  void incrementResearch() {
+    _research++;
+    notifyListeners();
   }
 }
