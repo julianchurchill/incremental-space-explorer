@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _gameTickTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-      Provider.of<GameDataModel>(context, listen: false).incrementTick();
+      Provider.of<GameDataModel>(context, listen: false).incrementTickCount();
     });
   }
 
@@ -138,11 +138,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     TextButton(
-                      onPressed: gameData.incrementResearch,
-                      child: const Text('Increment Research'),
+                      onPressed: gameData.research >= gameData.researchPerSecondIncrementCost ? gameData.spendResearch : null,
+                      child: Text('Spend ${gameData.researchPerSecondIncrementCost} research to improve research/s'),
                     ),
                     Text('Current research: ${gameData.research}'),
-                    Text('Current ticks: ${gameData.ticks}'),
+                    Text('Current research/s: ${gameData.researchPerSecond}'),
+                    Text('Current ticks: ${gameData.tickCount}'),
                   ],
                 );
               }
@@ -160,19 +161,27 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class GameDataModel extends ChangeNotifier {
-  int _tick = 0;
+  int _tickCount = 0;
   int _research = 0;
+  int _researchPerSecond = 1;
+  int _researchPerSecondIncrementCost = 10;
 
-  int get ticks => _tick;
+  int get tickCount => _tickCount;
   int get research => _research;
+  int get researchPerSecond => _researchPerSecond;
+  int get researchPerSecondIncrementCost => _researchPerSecondIncrementCost;
 
-  void incrementTick() {
-    _tick++;
+  void incrementTickCount() {
+    _tickCount++;
+    // tick side effects
+    _research += _researchPerSecond;
     notifyListeners();
   }
 
-  void incrementResearch() {
-    _research++;
+  void spendResearch() {
+    _research -= researchPerSecondIncrementCost;
+    _researchPerSecond++;
+    _researchPerSecondIncrementCost++;
     notifyListeners();
   }
 }
