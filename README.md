@@ -8,7 +8,7 @@ Open the repository with VS Code, open `main.dart` and choose Run and Debug from
 
 ### Publish Web App
 
-Run `flutter build web`. The output will go to `build\web`. Copy the contents of that folder to https://github.com/julianchurchill/IncrementalTest and commit/push to main. GitHub will publish the contents of the repository upon a push to main and the new version of the web app will be available at https://julianchurchill.github.io/IncrementalTest/.
+Run `flutter clean` and then `flutter build web --base-href="/IncrementalTest/"`. The output will go to `build\web`. Copy the contents of that folder to https://github.com/julianchurchill/IncrementalTest and commit/push to main. GitHub will publish the contents of the repository upon a push to main and the new version of the web app will be available at https://julianchurchill.github.io/IncrementalTest/.
 
 ## TODO
 
